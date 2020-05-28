@@ -8,8 +8,7 @@ class DB {
 
   // Find all departments
   findAllDepartments() {
-    // UNCOMMENT the line betow to code your query to select all departments
-    // return this.connection.query(YOUR_QUERY_FOR_SELECT_ALL_DEPTS);
+    return this.connection.query("SELECT * FROM department");
   }
 
   // Create a new department

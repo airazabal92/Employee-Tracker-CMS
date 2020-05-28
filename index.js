@@ -6,7 +6,6 @@ init();
 
 // Display logo text, load main prompts
 function init() {
-  // Utilize asciiart-logo
   const intro = `
 ███████ ███    ███ ██████  ██       ██████  ██    ██ ███████ ███████     
 ██      ████  ████ ██   ██ ██      ██    ██  ██  ██  ██      ██          
@@ -23,11 +22,13 @@ function init() {
       
  `;
 
+  // Display logo
   console.log(intro);
 
   loadMainPrompts();
 }
 
+// Ask users what they want to do with CMS
 async function loadMainPrompts() {
   const { choice } = await prompt([
     {
@@ -96,13 +97,31 @@ async function loadMainPrompts() {
   }
 }
 
+// Function to view all departments
 async function viewDepartments() {
   // Using await to call database function "find all departments" and assign the resultant array to a variable
-  // UNCOMMENT the following line and add your code
-  // const YOUR_VARIALBE = await db.YOUR_DB_FUNCTION();
+  const departments = await db.findAllDepartments();
+
+  // Format db response to display with console.table
+  let deptArrayHolder = [];
+
+  for (let i = 0; i < departments.length; i++) {
+    let deptArray = [departments[i].id, departments[i].name];
+    deptArrayHolder.push(deptArray);
+  }
+
+  // Table Title
+  console.log("------------------------------------------------------");
+  console.log("DEPARTMENTS");
+  console.log("------------------------------------------------------");
+
+  // Display information in table format
+  console.table(["ID", "Name"], deptArrayHolder);
 
   console.log("\n");
-  console.table(YOUR_VARIALBE);
+
+  // console.log("\n");
+  // console.table(YOUR_VARIALBE);
 
   loadMainPrompts();
 }
