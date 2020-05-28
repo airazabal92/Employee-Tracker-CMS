@@ -97,7 +97,7 @@ async function loadMainPrompts() {
   }
 }
 
-// Function to view all departments
+// View all departments function
 async function viewDepartments() {
   // Using await to call database function "find all departments" and assign the resultant array to a variable
   const departments = await db.findAllDepartments();
@@ -119,7 +119,7 @@ async function viewDepartments() {
   console.table(["ID", "Name"], deptArrayHolder);
   console.log("\n");
 
-  // Call function to display initial questions again
+  // Ask user what they want to do next
   loadMainPrompts();
 }
 
@@ -144,10 +144,12 @@ async function addDepartment() {
   loadMainPrompts();
 }
 
+// View all roles function
 async function viewRoles() {
   // Using await to call database function to find all roles and assign the resultant array to a variable
   const roles = await db.findAllRoles();
 
+  // Format db response to display with console.table
   let roleArrayHolder = [];
 
   for (let i = 0; i < roles.length; i++) {
@@ -173,14 +175,15 @@ async function viewRoles() {
 
   console.log("\n");
 
+  // Ask user what they want to do next
   loadMainPrompts();
 }
 
 async function addRole() {
   // Call your database funtion to select all depts and assign the result to a variable
-  const YOUR_DEPT_VAR = await db.YOUR_DB_FUNCTION_FOR_DEPTS();
+  const allDepartments = await db.findAllDepartments();
 
-  const YOUR_DEPT_CHOICES = YOUR_DEPT_VAR.map(({ id, name }) => ({
+  const deptChoices = allDepartments.map(({ id, name }) => ({
     name: name,
     value: id,
   }));
@@ -198,12 +201,11 @@ async function addRole() {
       type: "list",
       name: "department_id",
       message: "Which department does the role belong to?",
-      choices: YOUR_DEPT_CHOICES,
+      choices: deptChoices,
     },
   ]);
 
-  // UNCOMMENT below to call database function to create role
-  // await db.YOUR_DB_FUNCTION_TO_CREATE_ROLE(role);
+  await db.createRole(role);
 
   console.log(`Added ${role.title} to the database`);
 

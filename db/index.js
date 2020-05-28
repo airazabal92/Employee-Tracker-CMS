@@ -20,7 +20,6 @@ class DB {
       },
       function (err, res) {
         if (err) throw err;
-        console.log("Success");
       }
     );
     return;
@@ -33,8 +32,20 @@ class DB {
 
   // Create a new role
   createRole(role) {
-    // UNCOMMENT the line betow to code your query to create role
-    // return this.connection.query(YOUR_QUERY_FOR_INSERT);
+    {
+      this.connection.query(
+        "INSERT INTO role SET ?",
+        {
+          title: role.title,
+          salary: role.salary,
+          department_id: role.department_id,
+        },
+        function (err, res) {
+          if (err) throw err;
+        }
+      );
+      return;
+    }
   }
 
   // Find all employees, join with roles and departments to display their roles, salaries, departments, and managers
