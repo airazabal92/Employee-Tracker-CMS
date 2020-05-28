@@ -13,8 +13,17 @@ class DB {
 
   // Create a new department
   createDepartment(department) {
-    // UNCOMMENT the line betow to code your query to create a department, replacing ? with department to SET
-    // return this.connection.query(YOUR_QUERY_FOR_INSERT);
+    this.connection.query(
+      "INSERT INTO department SET ?",
+      {
+        name: department.name,
+      },
+      function (err, res) {
+        if (err) throw err;
+        console.log("Success");
+      }
+    );
+    return;
   }
 
   // Find all roles

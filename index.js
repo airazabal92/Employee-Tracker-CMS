@@ -117,17 +117,16 @@ async function viewDepartments() {
 
   // Display information in table format
   console.table(["ID", "Name"], deptArrayHolder);
-
   console.log("\n");
 
-  // console.log("\n");
-  // console.table(YOUR_VARIALBE);
-
+  // Call function to display initial questions again
   loadMainPrompts();
 }
 
+// Add department function
 async function addDepartment() {
-  const YOUR_DEPT_VARIABLE = await prompt([
+  // Ask what the name of the new department is
+  const deptTemplate = await prompt([
     {
       name: "name",
       message: "What is the name of the department?",
@@ -135,11 +134,13 @@ async function addDepartment() {
   ]);
 
   // Using await to call database function to create department and assign the result to a variable
-  // UNCOMMENT the following line and add your code
-  // await db.YOUR_DB_FUNCTION(YOUR_DEPT_VARIABLE);
+  await db.createDepartment(deptTemplate);
 
-  console.log("Added " + YOUR_DEPT_NAME + " to the database");
+  // Print out success
+  console.log("Added " + deptTemplate.name + " to the database");
+  console.log("\n");
 
+  // Ask user what they want to do next
   loadMainPrompts();
 }
 
@@ -273,16 +274,6 @@ async function addEmployee() {
       name: "last_name",
       message: "What is the employee's last name?",
     },
-    // {
-    //   type: "number",
-    //   name: "role_id",
-    //   message: "What is the employee's role id?",
-    // },
-    // {
-    //   type: "number",
-    //   name: "manager_id",
-    //   message: "What is the employee's manager id?",
-    // },
   ]);
 
   const getAllRoles = await db.findAllRoles();
