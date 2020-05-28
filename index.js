@@ -179,6 +179,7 @@ async function viewRoles() {
   loadMainPrompts();
 }
 
+// Add role function
 async function addRole() {
   // Call your database funtion to select all depts and assign the result to a variable
   const allDepartments = await db.findAllDepartments();
@@ -208,26 +209,51 @@ async function addRole() {
   await db.createRole(role);
 
   console.log(`Added ${role.title} to the database`);
+  console.log("\n");
 
   loadMainPrompts();
 }
 
+// View employees function
 async function viewEmployees() {
   // Using await keyword to call database function to find all employees and assign the returned result to a variable
-  const YOUR_EMP_VAR = await db.YOUR_DB_FUNCTION_TO_FIND_ALL_EMPS();
+  const employees = await db.findAllEmployees();
 
+  // Format db response to display with console.table
+  let employeesArrayHolder = [];
+
+  for (let i = 0; i < employees.length; i++) {
+    let employeeArray = [
+      employees[i].id,
+      employees[i].first_name,
+      employees[i].last_name,
+      employees[i].role_id,
+      employees[i].manager_id,
+    ];
+    employeesArrayHolder.push(employeeArray);
+  }
+
+  // Table Title
+  console.log("------------------------------------------------------");
+  console.log("EMPLOYEES");
+  console.log("------------------------------------------------------");
+
+  // Display information in table format
+  console.table(
+    ["ID", "First Name", "Last Name", "Role ID", "Manager ID"],
+    employeesArrayHolder
+  );
   console.log("\n");
-  console.table(YOUR_EMP_VAR);
 
   loadMainPrompts();
 }
 
 async function updateEmployeeRole() {
   // Create an employee variable to store the array returned from database find all employees function using await
-  const YOUR_EMP_VAR = await db.YOUR_DB_FUNCTION_TO_FIND_ALL();
+  const updateEmployee = await db.findAllEmployees();
 
   // With the array variable from above, create a new array for objects for each element in the array variable
-  const YOUR_EMP_CHOICES = YOUR_EMP_VAR.map(
+  const updateEmployeeChoices = updateEmployee.map(
     ({ id, first_name, last_name }) => ({
       name: `${first_name} ${last_name}`,
       value: id,
@@ -238,14 +264,14 @@ async function updateEmployeeRole() {
     {
       type: "list",
       name: "employeeId",
-      message: "YOUR_QUESTION",
-      choices: YOUR_EMP_CHOICES,
+      message: "Who do you want to update?",
+      choices: updateEmployeeChoices,
     },
   ]);
 
-  const YOUR_ROLES_VAR = await db.YOUR_DB_FUNCTION_FOR_ALL_ROLES();
+  const updateRole = await db.findAllRoles();
 
-  const YOUR_ROLE_CHOICES = YOUR_ROLES_VAR.map(({ id, title }) => ({
+  const updateRoleChoices = updateRole.map(({ id, title }) => ({
     name: title,
     value: id,
   }));
@@ -254,12 +280,14 @@ async function updateEmployeeRole() {
     {
       type: "list",
       name: "roleId",
-      message: "YOUR_QUESTION_FOR_ROLE",
-      choices: YOUR_ROLE_CHOICES,
+      message: "What role would you like to assign?",
+      choices: updateRoleChoices,
     },
   ]);
 
-  await db.YOUR_DB_FUNCTION_FOR_UPDATE(employeeId, roleId);
+  console.log(roleId);
+
+  await db.updateEmployeeRoleDB(employeeId, roleId);
 
   console.log("Updated employee's role");
 
@@ -334,16 +362,6 @@ async function addEmployee() {
     },
   ]);
 
-  // Prompt for role choices
-
-  // Assign the role to emplyee
-  // employee.role_id = roleId;
-
-  // // Prompt manager choices
-
-  // // Assign the manager choice to employee
-  //
-
   const roleID = parseInt(roleQuery.roleId);
   const managerID = parseInt(managerQuery.managerId);
 
@@ -354,19 +372,12 @@ async function addEmployee() {
     manager_id: managerID,
   };
 
-  console.log(employee);
-
   await db.createEmployee(employee);
 
   console.log(
     `Added ${employee.first_name} ${employee.last_name} to the database`
   );
-
-  // await db.YOUR_DB_FUNCTION_TO_CREATE_EMP_(employee);
-
-  // console.log(
-  //   `Added ${employee.first_name} ${employee.last_name} to the database`
-  // );
+  console.log("\n");
 
   loadMainPrompts();
 }
