@@ -61,8 +61,6 @@ class DB {
 
   // Create a new employee
   createEmployee(employee) {
-    // UNCOMMENT the line below to code your insert query
-    // return this.connection.query(YOUR_QUERY_FOR_INSERT);
     this.connection.query(
       "INSERT INTO employee SET ?",
       {
@@ -80,13 +78,14 @@ class DB {
 
   // Update the given employee's role
   updateEmployeeRoleDB(employeeId, roleId) {
-    return this.connection.query(
+    this.connection.query(
       "UPDATE employee SET role_id='?' WHERE id='?'",
       [roleId, employeeId],
       function (err, res) {
-        if ("IN DATABASE ERR" + err) throw err;
+        if (err) throw err;
       }
     );
+    return;
   }
 }
 
