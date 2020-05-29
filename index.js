@@ -287,7 +287,12 @@ async function updateEmployeeRole() {
 
   console.log(roleId);
 
-  await db.updateEmployeeRoleDB(employeeId, roleId);
+  const employeeInt = parseInt(employeeId);
+  const roleInt = parseInt(roleId);
+
+  console.log("EMPLOYEE INT " + employeeInt + " ROLE INT " + roleInt);
+
+  const data = await db.updateEmployeeRoleDB(employeeInt, roleInt);
 
   console.log("Updated employee's role");
 
