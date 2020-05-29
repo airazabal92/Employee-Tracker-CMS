@@ -74,7 +74,7 @@ async function loadMainPrompts() {
     },
   ]);
 
-  // Call the appropriate function depending on what the user chose
+  // Call the appropriate function depending on what the user chooses
   switch (choice) {
     case "VIEW_DEPARTMENTS":
       return viewDepartments();
@@ -133,7 +133,7 @@ async function addDepartment() {
     },
   ]);
 
-  // Using await to call database function to create department and assign the result to a variable
+  // Using await to call database function to create department
   await db.createDepartment(deptTemplate);
 
   // Print out success
@@ -184,6 +184,7 @@ async function addRole() {
   // Call your database funtion to select all depts and assign the result to a variable
   const allDepartments = await db.findAllDepartments();
 
+  // Make the departments into an array that can be passed to prompt list type
   const deptChoices = allDepartments.map(({ id, name }) => ({
     name: name,
     value: id,
@@ -206,11 +207,14 @@ async function addRole() {
     },
   ]);
 
+  // Using await to call database function to create the new role
   await db.createRole(role);
 
+  // Display success
   console.log(`Added ${role.title} to the database`);
   console.log("\n");
 
+  // Ask what user wants to do next
   loadMainPrompts();
 }
 
@@ -245,9 +249,11 @@ async function viewEmployees() {
   );
   console.log("\n");
 
+  // Ask what user wants to do next
   loadMainPrompts();
 }
 
+// Update Employee Role function
 async function updateEmployeeRole() {
   // Create an employee variable to store the array returned from database find all employees function using await
   const updateEmployee = await db.findAllEmployees();
@@ -260,6 +266,7 @@ async function updateEmployeeRole() {
     })
   );
 
+  // Ask what employee needs to be updated
   const { employeeId } = await prompt([
     {
       type: "list",
@@ -269,13 +276,16 @@ async function updateEmployeeRole() {
     },
   ]);
 
+  // Create a role variable to store the array returned from database find all roles function using await
   const updateRole = await db.findAllRoles();
 
+  // With the array variable from above, create a new array for objects for each element in the array variable
   const updateRoleChoices = updateRole.map(({ id, title }) => ({
     name: title,
     value: id,
   }));
 
+  // Ask what new role needs to be assigned
   const { roleId } = await prompt([
     {
       type: "list",
@@ -285,21 +295,24 @@ async function updateEmployeeRole() {
     },
   ]);
 
-  console.log(roleId);
-
+  // Parse role and employee id into ints
   const employeeInt = parseInt(employeeId);
   const roleInt = parseInt(roleId);
 
-  console.log("EMPLOYEE INT " + employeeInt + " ROLE INT " + roleInt);
-
+  // Pass ints to update employe role in database
   const data = await db.updateEmployeeRoleDB(employeeInt, roleInt);
 
+  // Display success
   console.log("Updated employee's role");
+  console.log("\n");
 
+  // Ask what the user wants to do next
   loadMainPrompts();
 }
 
+// Function to add an employee
 async function addEmployee() {
+  // Ask the first and last name of employee
   const employeeTemplate = await prompt([
     {
       name: "first_name",
@@ -310,7 +323,7 @@ async function addEmployee() {
       message: "What is the employee's last name?",
     },
   ]);
-
+  // Get all roles to display for reference
   const getAllRoles = await db.findAllRoles();
   let roleArrayHolder = [];
 
@@ -335,6 +348,7 @@ async function addEmployee() {
   );
   console.log("\n");
 
+  // Ask what the employee's role id will be
   const roleQuery = await prompt([
     {
       name: "roleId",
@@ -343,6 +357,7 @@ async function addEmployee() {
     },
   ]);
 
+  // Get all managers to display for reference
   const getAllManagers = await db.findManagerRole();
   let managerArrayHolder = [];
 
@@ -359,6 +374,7 @@ async function addEmployee() {
   console.table(["Manager ID", "Employee Role Title"], managerArrayHolder);
   console.log("\n");
 
+  // Ask what manager id needs to be assigned
   const managerQuery = await prompt([
     {
       name: "managerId",
@@ -367,9 +383,11 @@ async function addEmployee() {
     },
   ]);
 
+  // Make manager ID and role ID integers
   const roleID = parseInt(roleQuery.roleId);
   const managerID = parseInt(managerQuery.managerId);
 
+  // Create new employee obj
   const employee = {
     first_name: employeeTemplate.first_name,
     last_name: employeeTemplate.last_name,
@@ -377,17 +395,21 @@ async function addEmployee() {
     manager_id: managerID,
   };
 
+  // Pass new employee to create employee function
   await db.createEmployee(employee);
 
+  // Display success
   console.log(
     `Added ${employee.first_name} ${employee.last_name} to the database`
   );
   console.log("\n");
 
+  // Ask what the user wants to do next
   loadMainPrompts();
 }
 
 function quit() {
   console.log("Goodbye!");
+  // End process
   process.exit();
 }
