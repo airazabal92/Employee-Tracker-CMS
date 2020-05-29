@@ -80,17 +80,13 @@ class DB {
 
   // Update the given employee's role
   updateEmployeeRoleDB(employeeId, roleId) {
-    {
-      this.connection.query(
-        "UPDATE employee SET role_id = ? WHERE employee.id = ?",
-        { roleId },
-        { employeeId },
-        function (err, res) {
-          if (err) throw err;
-        }
-      );
-      return;
-    }
+    return this.connection.query(
+      "UPDATE employee SET role_id='?' WHERE id='?'",
+      [roleId, employeeId],
+      function (err, res) {
+        if ("IN DATABASE ERR" + err) throw err;
+      }
+    );
   }
 }
 
